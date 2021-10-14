@@ -1,10 +1,12 @@
 package com.kalevet.pixaget.data.repositories.remote.requests
 
+import com.kalevet.pixaget.data.repositories.remote.requests.PixabaySearchRequest.*
 import com.kalevet.pixaget.data.repositories.remote.responses.VideoSearchResult
-import com.kalevet.pixaget.exceptions.*
+import com.kalevet.pixaget.exceptions.PerPageOutOfRangeException
+import com.kalevet.pixaget.exceptions.QueryOverLimitException
 import com.kalevet.pixaget.utill.PIXABAY_BASE_URL
 
-/** A class to specify a video search on the Pixabay's repository server using the @see <a href="https://pixabay.com/api/docs/">Pixabay API</a>
+/** A class to specify a video search on the Pixaget's repository server using the @see <a href="https://pixabay.com/api/docs/">Pixaget API</a>
  * @param   query   A URL encoded search term. If omitted, all videos
  *                  are returned. This value may not exceed 100 characters.
  *                  Example: "yellow+flower"
@@ -43,19 +45,19 @@ import com.kalevet.pixaget.utill.PIXABAY_BASE_URL
 ", "false"
  *                  Default: "false"
  *
- *  @return a VideoSearchRequest object to be used to create a request from the Pixabay server
+ *  @return a VideoSearchRequest object to be used to create a request from the Pixaget server
  */
 data class VideoSearchRequest @JvmOverloads constructor(
     val query: String = String(),
-    val lang: String = "en",
+    val lang: Language = Language.English,
     val id: String = String(),
-    val video_type: String = "all",
-    val category: String = String(),
+    val video_type: VideoType = VideoType.all,
+    val category: Category = Category.all,
     val min_width: Int = 0,
     val min_height: Int = 0,
     val editors_choice: Boolean = false,
     val safeSearch: Boolean = false,
-    val order: String = "popular",
+    val order: Order = Order.popular,
     var page: Int = 1,
     val per_page: Int = 20,
     val callback: String = String(),
@@ -81,38 +83,20 @@ data class VideoSearchRequest @JvmOverloads constructor(
             }
         }
 
-        if (lang != "en") {
-            if (!SUPPORTED_LANGUAGES.contains(lang))
-                throw LanguageNotSupportedException(
-                    message = LanguageNotSupportedException.generateMessage(lang)
-                )
-            else {
-                builder.append("&lang=$lang")
-            }
+        if (lang != Language.English) {
+            builder.append("&lang=${lang.value}")
         }
 
         if (id.isNotEmpty()) {
             builder.append("&id=$id")
         }
 
-        if (video_type != "all") {
-            if (!SUPPORTED_VIDEO_TYPES.contains(video_type))
-                throw VideoTypeNotSupportedException(
-                    message = VideoTypeNotSupportedException.generateMessage(video_type)
-                )
-            else {
+        if (video_type != VideoType.all) {
                 builder.append("&video_type=$video_type")
-            }
         }
 
-        if (category.isNotEmpty()) {
-            if (!SUPPORTED_CATEGORIES.contains(category))
-                throw CategoryNotSupportedException(
-                    message = CategoryNotSupportedException.generateMessage(category)
-                )
-            else {
+        if (category != Category.all) {
                 builder.append("&category=$category")
-            }
         }
 
         if (min_width != 0) {
@@ -131,14 +115,8 @@ data class VideoSearchRequest @JvmOverloads constructor(
             builder.append("&safesearch=$safeSearch")
         }
 
-        if (order != "popular") {
-            if (!SUPPORTED_ORDER.contains(order))
-                throw OrderNotSupportedException(
-                    message = OrderNotSupportedException.generateMessage(order)
-                )
-            else {
+        if (order != Order.popular) {
                 builder.append("&order=$order")
-            }
         }
 
         if (page != 1) {
@@ -182,36 +160,18 @@ data class VideoSearchRequest @JvmOverloads constructor(
             }
         }
 
-        if (lang != "en") {
-            if (!SUPPORTED_LANGUAGES.contains(lang))
-                throw LanguageNotSupportedException(
-                    message = LanguageNotSupportedException.generateMessage(lang)
-                )
-            else {
-                queryMap["lang"] = lang
-            }
+        if (lang != Language.English) {
+                queryMap["lang"] = lang.value
         }
 
         if (id.isNotEmpty()) queryMap["id"] = id
 
-        if (video_type != "all") {
-            if (!SUPPORTED_IMAGE_TYPES.contains(video_type))
-                throw ImageTypeNotSupportedException(
-                    message = ImageTypeNotSupportedException.generateMessage(video_type)
-                )
-            else {
-                queryMap["image_type"] = video_type
-            }
+        if (video_type != VideoType.all) {
+                queryMap["image_type"] = video_type.name
         }
 
-        if (category.isNotEmpty()) {
-            if (!SUPPORTED_CATEGORIES.contains(category))
-                throw CategoryNotSupportedException(
-                    message = CategoryNotSupportedException.generateMessage(category)
-                )
-            else {
-                queryMap["category"] = category
-            }
+        if (category != Category.all) {
+                queryMap["category"] = category.name
         }
 
         if (min_width != 0) queryMap["min_width"] = min_width.toString()
@@ -222,14 +182,8 @@ data class VideoSearchRequest @JvmOverloads constructor(
 
         if (safeSearch) queryMap["safesearch"] = safeSearch.toString()
 
-        if (order != "popular") {
-            if (!SUPPORTED_ORDER.contains(order))
-                throw OrderNotSupportedException(
-                    message = OrderNotSupportedException.generateMessage(order)
-                )
-            else {
-                queryMap["order"] = order
-            }
+        if (order != Order.popular) {
+                queryMap["order"] = order.name
         }
 
         if (page != 1) queryMap["page"] = page.toString()

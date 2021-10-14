@@ -1,8 +1,8 @@
 package com.kalevet.pixaget.exceptions
 
 
-const val HTTP_CLIENT_IS_MISSING_EXCEPTION_MESSAGE = "Pixabay builder must be provided with a http client in order to function.\n" +
-        "You can use Retrofit2 by calling Pixabay.Builder().setRetrofitBuilder(Retrofit.Builder()), or you can use OkHttp by calling Pixabay.Builder().setOkHttpClient(okHttpClient()) " +
+const val HTTP_CLIENT_IS_MISSING_EXCEPTION_MESSAGE = "Pixaget builder must be provided with a http client in order to function.\n" +
+        "You can use Retrofit2 by calling Pixaget.Builder().setRetrofitBuilder(Retrofit.Builder()), or you can use OkHttp by calling Pixaget.Builder().setOkHttpClient(okHttpClient()) " +
         " Calling both methods ( setRetrofitBuilder(), setOkHttpClient() ) will use Retrofit with the OkHttpClient (retrofitBuilder.client(okHttpClient))."
 
 class HttpClientIsMissingException : PixabayException {

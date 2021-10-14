@@ -2,7 +2,7 @@ package com.kalevet.pixaget.data.repositories.remote.responses
 
 import com.kalevet.pixaget.data.models.video.VideoItem
 
-/** This class represent a json response for a Pixabay video search.
+/** This class represent a json response for a Pixaget video search.
  *  see also @see VideoItem
  *
  * @param total	The total number of hits.
@@ -11,7 +11,7 @@ import com.kalevet.pixaget.data.models.video.VideoItem
  * @param hits  A list of the video search results
  */
 data class VideoSearchResult(
-    val total: Int,
-    val totalHits: Int,
-    var hits: List<VideoItem>
-) : PixabaySearchResult
+    override val total: Int,
+    override val totalHits: Int,
+    override var hits: List<VideoItem>
+) : PixabaySearchResult<VideoItem>

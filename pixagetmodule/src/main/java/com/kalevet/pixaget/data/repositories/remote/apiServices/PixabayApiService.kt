@@ -5,6 +5,6 @@ import com.kalevet.pixaget.data.repositories.remote.responses.PixabaySearchResul
 
 interface PixabayApiService {
 
-    suspend fun sendRequest(request: PixabaySearchRequest<*>): PixabaySearchResult?
+    suspend fun sendRequest(request: PixabaySearchRequest<*>): PixabaySearchResult<*>?
 
 }

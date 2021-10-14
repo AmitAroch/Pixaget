@@ -20,8 +20,8 @@ class OkHttpClientAdapter(
     private val debug: Boolean = false,
 ) : PixabayApiService {
 
-    override suspend fun sendRequest(request: PixabaySearchRequest<*>): PixabaySearchResult? {
-        var result: PixabaySearchResult? = null
+    override suspend fun sendRequest(request: PixabaySearchRequest<*>): PixabaySearchResult<*>? {
+        var result: PixabaySearchResult<*>? = null
         withContext(IO) {
             val okHttpRequest = Request.Builder()
                 .url(request.buildRequestUrl())
@@ -35,7 +35,7 @@ class OkHttpClientAdapter(
                     }
                 } else {
                     if (debug) {
-                        Log.e("Pixabay", "Pixabay server faild to response to the request response.code: ${response.code}, response.message: ${response.message}")
+                        Log.e("Pixaget", "Pixaget server failed to response to the request response.code: ${response.code}, response.message: ${response.message}")
                         result = null
                     } else {
                         result = null

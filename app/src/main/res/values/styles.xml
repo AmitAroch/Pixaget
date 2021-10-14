@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ItemTitle">
+        <item name="android:textColor">?attr/colorOnPrimarySurface</item>
+        <item name="android:textSize">20sp</item>
+        <item name="maxLines">1</item>
+        <item name="android:text">@string/video_item_defualt_title</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+
+    <style name="ItemSubTitle">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:text">@string/video_item_default_sub_title</item>
+        <item name="maxLines">1</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+
+    <style name="VideoItemDuration">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:text">@string/video_item_durantion_default</item>
+        <item name="android:backgroundTint">?attr/colorSecondary</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+    </style>
+
+
+    <style name="NoResultsFound">
+        <item name="android:textColor">?attr/colorOnPrimarySurface</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+
+    <style name="ItemUserImage">
+        <item name="android:layout_margin">10dp</item>
+        <item name="android:src">@mipmap/ic_launcher</item>
+        <item name="android:scaleType">centerCrop</item>
+    </style>
+
+    <style name="VideoItemThumbnail">
+        <item name="android:scaleType">center</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:src">@mipmap/ic_launcher</item>
+    </style>
+
+    <style name="ImageItemThumbnail">
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:src">@mipmap/ic_launcher</item>
+    </style>
+
+    <style name="LoadStateItem">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:backgroundTint">?attr/colorSecondary</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginEnd">32dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:text">@string/load_state_button_text</item>
+    </style>
+
+    <style name="LoadStateItemErrorMessage">
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginEnd">32dp</item>
+    </style>
+
+</resources>

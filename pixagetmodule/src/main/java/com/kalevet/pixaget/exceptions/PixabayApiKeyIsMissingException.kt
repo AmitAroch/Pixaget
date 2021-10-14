@@ -1,7 +1,7 @@
 package com.kalevet.pixaget.exceptions
 
 
-const val API_KEY_IS_MISSING_EXCEPTION_MESSAGE = "Pixabay builder must be provided with a pixabay API key in order to function, pixabayApiKey was {null}. call Pixabay.Builder().pixabayApiKey({PROVIDED_API_KEY})"
+const val API_KEY_IS_MISSING_EXCEPTION_MESSAGE = "Pixaget builder must be provided with a pixabay API key in order to function, pixabayApiKey was {null}. call Pixaget.Builder().pixabayApiKey({PROVIDED_API_KEY})"
 
 class PixabayApiKeyIsMissingException : PixabayException {
     constructor() : super()

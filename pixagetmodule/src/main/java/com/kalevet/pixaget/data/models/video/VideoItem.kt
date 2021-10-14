@@ -1,11 +1,11 @@
 package com.kalevet.pixaget.data.models.video
 
 
-/** This class represent a json response for one video result of the Pixabay video search.
+/** This class represent a json response for one video result of the Pixaget video search.
  * see also @see VideoResolution and @see VideoResolutionDetails
  *
  * @param id    A unique identifier for this video.
- * @param pageURL    Source page on Pixabay.
+ * @param pageURL    Source page on Pixaget.
  * @param type  The type of the video: "film" or "animation".
  * @param tags  Tags related to the video Example: "flowers, yellow, blossom".
  * @param duration  The duration of the video in seconds.
@@ -13,7 +13,7 @@ package com.kalevet.pixaget.data.models.video
  *                      https://i.vimeocdn.com/video/{ PICTURE_ID }_{ SIZE }.jpg
  *                      Available sizes: 100x75, 200x150, 295x166, 640x360, 960x540, 1920x1080
  *                      Exampe: https://i.vimeocdn.com/video/529927645_295x166.jpg
- * @param pictureURL A URL of the video's page on the Pixabay website.
+ * @param pictureURL A URL of the video's page on the Pixaget website.
  * @param videos    A set of differently sizes video streams @see VideoResolution .
  *                  Append the GET parameter "download=1" to any of the video stream URLs to have them served as downloads.
  *

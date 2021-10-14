@@ -10,7 +10,7 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 
 
-class RetroftAdapter(
+class RetrofitAdapter(
     retrofitBuilder: Retrofit.Builder,
     jsonConverterFactory: Converter.Factory,
     okHttpClient: OkHttpClient? = null,
@@ -30,8 +30,8 @@ class RetroftAdapter(
             .create(PixabayRetrofitApi::class.java)
     }
 
-    override suspend fun sendRequest(request: PixabaySearchRequest<*>): PixabaySearchResult? {
-        val result = when (request.getResponseClassType()) {
+    override suspend fun sendRequest(request: PixabaySearchRequest<*>): PixabaySearchResult<*>? {
+        val result: PixabaySearchResult<*>? = when (request.getResponseClassType()) {
             ImageSearchResult::class.java -> apiService.getImages(request.buildRequestQueryMap())
             VideoSearchResult::class.java -> apiService.getVideos(request.buildRequestQueryMap())
             else -> null

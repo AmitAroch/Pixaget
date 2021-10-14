@@ -4,6 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/amit1/AndroidStudioProjects/PixabayModule/app/src/main/res/layout/activity_main.xml" value="0.16875" />
+        <entry key="..\:/Users/amit1/AndroidStudioProjects/Pixaget/app/src/main/res/drawable/no_video_image.xml" value="0.18489583333333334" />
+        <entry key="..\:/Users/amit1/AndroidStudioProjects/Pixaget/app/src/main/res/layout/activity_main.xml" value="0.16875" />
+        <entry key="..\:/Users/amit1/AndroidStudioProjects/Pixaget/app/src/main/res/layout/fragment_image_list.xml" value="0.16875" />
+        <entry key="..\:/Users/amit1/AndroidStudioProjects/Pixaget/app/src/main/res/layout/image_item.xml" value="0.16875" />
+        <entry key="..\:/Users/amit1/AndroidStudioProjects/Pixaget/app/src/main/res/layout/load_state_item.xml" value="0.16875" />
+        <entry key="..\:/Users/amit1/AndroidStudioProjects/Pixaget/app/src/main/res/layout/video_item.xml" value="0.16875" />
       </map>
     </option>
   </component>

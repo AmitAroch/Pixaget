@@ -3,7 +3,7 @@ package com.kalevet.pixaget.data.repositories.remote.responses
 import com.kalevet.pixaget.data.models.image.ImageItem
 
 data class ImageSearchResult(
-    val total: Int,
-    val totalHits: Int,
-    var hits: List<ImageItem>
-) : PixabaySearchResult
+    override val total: Int,
+    override val totalHits: Int,
+    override var hits: List<ImageItem>
+) : PixabaySearchResult<ImageItem>

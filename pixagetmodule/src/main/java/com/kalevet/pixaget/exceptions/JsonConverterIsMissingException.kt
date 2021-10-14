@@ -1,8 +1,8 @@
 package com.kalevet.pixaget.exceptions
 
 
-const val JSON_PARSER_IS_MISSING_EXCEPTION_MESSAGE = "Pixabay builder must be provided with a json converter in order to function.\n" +
-        " call Pixabay.Builder().setConverter({Pixabay.ConverterOptions}), where Pixabay.ConverterOptions is one of the following: GSON, JACKSON, MOSHI."
+const val JSON_PARSER_IS_MISSING_EXCEPTION_MESSAGE = "Pixaget builder must be provided with a json converter in order to function.\n" +
+        " call Pixaget.Builder().setConverter({Pixaget.ConverterOptions}), where Pixaget.ConverterOptions is one of the following: GSON, JACKSON, MOSHI."
 
 class JsonConverterIsMissingException : PixabayException {
     constructor() : super()

@@ -3,7 +3,7 @@ package com.kalevet.pixaget.data.models.image
 /**
  *
  * @param   id        A unique identifier for this image.
- * @param   pageURL    Source page on Pixabay, which provides a download link for the original image of the
+ * @param   pageURL    Source page on Pixaget, which provides a download link for the original image of the
  *                  dimension imageWidth x imageHeight and the file size imageSize.
  * @param   type    The type of the image: "photo", "illustration", "vector".
  * @param   tags    Tags related to the image Example: "flowers, yellow, blossom".
