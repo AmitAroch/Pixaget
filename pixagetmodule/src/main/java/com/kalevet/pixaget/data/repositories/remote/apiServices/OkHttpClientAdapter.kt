@@ -21,37 +21,37 @@ class OkHttpClientAdapter(
     @Throws(IOException::class, HttpException::class)
     override suspend fun sendRequest(request: PixabaySearchRequest<*>): PixabaySearchResult<*>? {
         var result: PixabaySearchResult<*>? = null
-            val okHttpRequest = Request.Builder()
-                .url(request.buildRequestUrl())
-                .build()
-            try {
-                val response: Response
-                //withContext(IO) {
-                    response = client.newCall(okHttpRequest).await()
-                //}
-                if (response.isSuccessful) {
-                    response.body?.charStream()?.let { reader ->
-                        result = jsonConverter.convert(reader, request.getResponseClassType())
-                        response.closeQuietly()
-                    }
-                } else {
-                    if (debug) {
-                        Log.e(
-                            "OkHttpClientAdapter",
-                            "Pixabay server failed to response to the request response.code: ${response.code}, response.message: ${response.message}"
-                        )
-                    }
-                    throw (HttpException(response))
-                    /*if (debug) {
-                        Log.e("Pixabay", "Pixabay server failed to response to the request response.code: ${response.code}, response.message: ${response.message}")
-                        result = null
-                    } else {
-                        result = null
-                    }*/
+        val okHttpRequest = Request.Builder()
+            .url(request.buildRequestUrl())
+            .build()
+        try {
+            val response: Response
+            //withContext(IO) {
+            response = client.newCall(okHttpRequest).await()
+            //}
+            if (response.isSuccessful) {
+                response.body?.charStream()?.let { reader ->
+                    result = jsonConverter.convert(reader, request.getResponseClassType())
+                    response.closeQuietly()
                 }
-            } catch (e: IOException) {
-                result = null
+            } else {
+                if (debug) {
+                    Log.e(
+                        "OkHttpClientAdapter",
+                        "Pixabay server failed to response to the request response.code: ${response.code}, response.message: ${response.message}"
+                    )
+                }
+                throw (HttpException(response))
+                /*if (debug) {
+                    Log.e("Pixabay", "Pixabay server failed to response to the request response.code: ${response.code}, response.message: ${response.message}")
+                    result = null
+                } else {
+                    result = null
+                }*/
             }
+        } catch (e: IOException) {
+            result = null
+        }
 
         return result
     }

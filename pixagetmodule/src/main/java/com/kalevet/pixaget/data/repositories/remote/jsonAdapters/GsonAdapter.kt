@@ -6,8 +6,15 @@ import java.io.Reader
 
 class GsonAdapter: JsonConverter {
 
-    val gson: Gson = Gson()
+    private val gson: Gson
 
+    init {
+        try {
+            gson = Gson()
+        }catch (e: NoClassDefFoundError){
+            throw NoClassDefFoundError("The Moshi builder class was not found, try adding this: 'implementation(\"com.google.code.gson:gson:2.8.8\")' to your app's build.gradle file")
+        }
+    }
     override fun <T> convert(jsonReader: Reader, classOfT: Class<T>): T {
         return gson.fromJson(jsonReader, classOfT)
     }

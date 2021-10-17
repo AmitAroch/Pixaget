@@ -4,18 +4,30 @@ import com.kalevet.pixaget.data.repositories.remote.JsonConverter
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.io.Reader
 
 class MoshiAdapter: JsonConverter {
 
-    val moshi = Moshi.Builder().build()
+    private val moshi:Moshi
+
+    init {
+        try {
+            moshi = Moshi.Builder()
+                .addLast(KotlinJsonAdapterFactory())
+                .build()
+        }catch (e: NoClassDefFoundError){
+            throw NoClassDefFoundError("The Moshi builder class was not found, try adding this: 'implementation(\"com.squareup.moshi:moshi-kotlin:1.12.0\")' to your app's build.gradle file")
+        }
+    }
 
     override fun <T> convert(jsonReader: Reader, classOfT: Class<T>): T {
         val adapter: JsonAdapter<T> = moshi.adapter(classOfT)
-        return adapter.fromJson(readerToString(jsonReader)) ?: throw JsonDataException()
+        val result = adapter.fromJson(readerToString(jsonReader)) ?: throw JsonDataException()
+        return result
     }
 
-    fun readerToString(reader: Reader): String {
+    private fun readerToString(reader: Reader): String {
         val arr = CharArray(8 * 1024)
         val buffer = StringBuilder()
         var numCharsRead: Int

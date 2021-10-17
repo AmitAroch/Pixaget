@@ -16,12 +16,27 @@ object PixabayProvider {
 
     private const val apiKey = "23570191-4b9d123947a3c70a11419dfbe"
 
+    /*@Singleton
+    @Provides
+    fun providePixabay(): Pixaget {
+        return Pixaget.RetrofitBuilder()
+            .setPixabayApiKey(apiKey)
+            .setConverter(Pixaget.ConverterOptions.MOSHI)
+            //.setConverter(Pixaget.ConverterOptions.JACKSON)
+            //.setConverter(Pixaget.ConverterOptions.GSON)
+            .setRetrofitBuilder(Retrofit.Builder())
+            //.setOkHttpClient(OkHttpClient())
+            .build()
+    }*/
+
     @Singleton
     @Provides
     fun providePixabay(): Pixaget {
-        return Pixaget.Builder()
+        return Pixaget.OkHttpBuilder()
             .setPixabayApiKey(apiKey)
-            .setConverter(Pixaget.ConverterOptions.GSON)
+            .setConverter(Pixaget.ConverterOptions.MOSHI)
+            //.setConverter(Pixaget.ConverterOptions.JACKSON)
+            //.setConverter(Pixaget.ConverterOptions.GSON)
             .setOkHttpClient(OkHttpClient())
             .build()
     }
