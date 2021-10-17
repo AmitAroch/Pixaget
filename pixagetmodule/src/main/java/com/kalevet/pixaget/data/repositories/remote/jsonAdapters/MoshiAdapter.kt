@@ -2,6 +2,7 @@ package com.kalevet.pixaget.data.repositories.remote.jsonAdapters
 
 import com.kalevet.pixaget.data.repositories.remote.JsonConverter
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
 import java.io.Reader
 
@@ -9,9 +10,9 @@ class MoshiAdapter: JsonConverter {
 
     val moshi = Moshi.Builder().build()
 
-    override fun <T> convert(jsonReader: Reader, classOfT: Class<T>): T? {
+    override fun <T> convert(jsonReader: Reader, classOfT: Class<T>): T {
         val adapter: JsonAdapter<T> = moshi.adapter(classOfT)
-        return adapter.fromJson(readerToString(jsonReader))
+        return adapter.fromJson(readerToString(jsonReader)) ?: throw JsonDataException()
     }
 
     fun readerToString(reader: Reader): String {

@@ -14,7 +14,7 @@ class JacksonAdapter : JsonConverter {
             KotlinModule.Builder().build()
         )
 
-    override fun <T> convert(jsonReader: Reader, classOfT: Class<T>): T? {
+    override fun <T> convert(jsonReader: Reader, classOfT: Class<T>): T {
         return objectMapper.readValue(jsonReader, classOfT)
     }
 }

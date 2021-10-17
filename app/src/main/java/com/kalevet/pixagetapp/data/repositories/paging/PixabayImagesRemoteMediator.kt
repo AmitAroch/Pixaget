@@ -21,7 +21,7 @@ private const val INITIAL_PAGE_NUM = 1
 class PixabayImagesRemoteMediator constructor(
     private val networkService: Pixaget,
     private val db: PixabayCashDatabase,
-    private var imageSearchRequest: ImageSearchRequest
+    private val imageSearchRequest: ImageSearchRequest
 ) : RemoteMediator<Int, ImageItemCash>() {
     private val imageCashDao = db.imageCashDao()
     private val remoteKeyDao = db.imagesRemoteKeyDao()
@@ -36,7 +36,7 @@ class PixabayImagesRemoteMediator constructor(
             // token returned from the previous page to let it continue
             // from where it left off. For REFRESH, pass null to load the
             // first page.
-            imageSearchRequest.page = when (loadType) {
+            val nextPage = when (loadType) {
                 LoadType.REFRESH -> INITIAL_PAGE_NUM
                 // In this example, you never need to prepend, since REFRESH
                 // will always load the first page in the list. Immediately
@@ -49,17 +49,12 @@ class PixabayImagesRemoteMediator constructor(
                     val remoteKey = db.withTransaction {
                         remoteKeyDao.remoteKeyByRequest(imageSearchRequest)
                     }
-                    // You must explicitly check if the page key is null when
-                    // appending, since null is only valid for initial load.
-                    // If you receive null for APPEND, that means you have
-                    // reached the end of pagination and there are no more
-                    // items to load.
-                    if (remoteKey.nextPage == null) {
-                        return MediatorResult.Success(
+                    if (remoteKey == null) {
+                        INITIAL_PAGE_NUM
+                    } else remoteKey.nextPage
+                        ?: return MediatorResult.Success(
                             endOfPaginationReached = true
                         )
-                    }
-                    remoteKey.nextPage
                 }
             }
 
@@ -67,8 +62,13 @@ class PixabayImagesRemoteMediator constructor(
             // be wrapped in a withContext(Dispatcher.IO) { ... } block
             // since Retrofit's Coroutine CallAdapter dispatches on a
             // worker thread.
-            val response = networkService.sendSearchRequest(imageSearchRequest)
-                ?: return MediatorResult.Error(IOException()) // TODO check if needed or just throw the exception from sendSearchRequest
+            imageSearchRequest.page = nextPage
+            val response = ResponseWrapper(
+                networkService.sendSearchRequest(imageSearchRequest),
+                imageSearchRequest.page,
+                imageSearchRequest.per_page
+            )
+            response.result ?: return MediatorResult.Error(IOException())
 
             // Store loaded data, and next key in transaction, so that
             // they're always consistent.
@@ -78,20 +78,18 @@ class PixabayImagesRemoteMediator constructor(
                     imageCashDao.deleteByRequest(imageSearchRequest)
                 }
 
-                // Update VideoRemoteKey for this query.
-                remoteKeyDao.insertOrReplace(
-                    ImageRemoteKey(
-                        label = imageSearchRequest,
-                        prevPage = prevPageNumber(),
-                        nextPage = nextPageNumber(response.hits.size)
-                    )
 
+                // Update VideoRemoteKey for this query.
+                remoteKeyDao.insertOrReplaceByRequest(
+                    imageSearchRequest,
+                    response.prevPage,
+                    response.nextPage
                 )
 
                 // Insert new images into database, which invalidates the
                 // current PagingData, allowing Paging to present the updates
                 // in the DB.
-                response.hits.map { imageItem ->
+                response.result.hits.map { imageItem ->
                     ImageItemCash.create(
                         imageItem,
                         imageSearchRequest
@@ -103,21 +101,15 @@ class PixabayImagesRemoteMediator constructor(
                 }
             }
 
-
             MediatorResult.Success(
-                endOfPaginationReached = nextPageNumber(response.hits.size) == null
+                endOfPaginationReached = response.nextPage == null
             )
 
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             MediatorResult.Error(e)
         }
     }
 
-    private fun prevPageNumber() =
-        if (imageSearchRequest.page == 1) null else imageSearchRequest.page - 1
-
-    private fun nextPageNumber(resultsSize: Int) =
-        if (resultsSize < imageSearchRequest.per_page) null else imageSearchRequest.page + 1
 
     override suspend fun initialize(): InitializeAction {
         val cacheTimeout = TimeUnit.DAYS.convert(1, TimeUnit.MILLISECONDS)

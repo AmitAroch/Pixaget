@@ -4,6 +4,6 @@ import java.io.Reader
 
 interface JsonConverter {
 
-    fun <T> convert(jsonReader: Reader, classOfT: Class<T>): T?
+    fun <T> convert(jsonReader: Reader, classOfT: Class<T>): T
 
 }

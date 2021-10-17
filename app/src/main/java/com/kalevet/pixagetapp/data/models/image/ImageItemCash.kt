@@ -9,6 +9,7 @@ import com.kalevet.pixaget.data.repositories.remote.requests.ImageSearchRequest
 data class ImageItemCash(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val lastUpdate: Long = System.currentTimeMillis(),
     val ImageId: Int,
     val type: String?,
     val title: String?,

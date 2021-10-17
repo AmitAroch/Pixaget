@@ -36,8 +36,6 @@ class RetrofitAdapter(
             VideoSearchResult::class.java -> apiService.getVideos(request.buildRequestQueryMap())
             else -> null
         }
-
         return result
     }
-
 }

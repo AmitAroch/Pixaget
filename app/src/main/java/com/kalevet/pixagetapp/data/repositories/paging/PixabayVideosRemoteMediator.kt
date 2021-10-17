@@ -36,7 +36,7 @@ class PixabayVideosRemoteMediator constructor(
             // token returned from the previous page to let it continue
             // from where it left off. For REFRESH, pass null to load the
             // first page.
-            videoSearchRequest.page = when (loadType) {
+            val nextPage = when (loadType) {
                 LoadType.REFRESH -> INITIAL_PAGE_NUM
                 // In this example, you never need to prepend, since REFRESH
                 // will always load the first page in the list. Immediately
@@ -49,17 +49,12 @@ class PixabayVideosRemoteMediator constructor(
                     val remoteKey = db.withTransaction {
                         remoteKeyDao.remoteKeyByRequest(videoSearchRequest)
                     }
-                    // You must explicitly check if the page key is null when
-                    // appending, since null is only valid for initial load.
-                    // If you receive null for APPEND, that means you have
-                    // reached the end of pagination and there are no more
-                    // items to load.
-                    if (remoteKey.nextPage == null) {
-                        return MediatorResult.Success(
+                    if (remoteKey == null) {
+                        INITIAL_PAGE_NUM
+                    } else remoteKey.nextPage
+                        ?: return MediatorResult.Success(
                             endOfPaginationReached = true
                         )
-                    }
-                    remoteKey.nextPage
                 }
             }
 
@@ -67,8 +62,13 @@ class PixabayVideosRemoteMediator constructor(
             // be wrapped in a withContext(Dispatcher.IO) { ... } block
             // since Retrofit's Coroutine CallAdapter dispatches on a
             // worker thread.
-            val response = networkService.sendSearchRequest(videoSearchRequest)
-                ?: return MediatorResult.Error(IOException()) // TODO check if needed or just throw the exception from sendSearchRequest
+            videoSearchRequest.page = nextPage
+            val response = ResponseWrapper(
+                networkService.sendSearchRequest(videoSearchRequest),
+                videoSearchRequest.page,
+                videoSearchRequest.per_page
+            )
+            response.result ?: return MediatorResult.Error(IOException())
 
             // Store loaded data, and next key in transaction, so that
             // they're always consistent.
@@ -80,16 +80,16 @@ class PixabayVideosRemoteMediator constructor(
 
 
                 // Update VideoRemoteKey for this query.
-                remoteKeyDao.insertOrReplace(
-                    VideoRemoteKey(
-                        label = videoSearchRequest,
-                        prevPage = prevPageNumber(),
-                        nextPage = nextPageNumber(response.hits.size)
-                    )
-
+                remoteKeyDao.insertOrReplaceByRequest(
+                    videoSearchRequest,
+                    response.prevPage,
+                    response.nextPage
                 )
 
-                response.hits.map { videoItem ->
+                // Insert new images into database, which invalidates the
+                // current PagingData, allowing Paging to present the updates
+                // in the DB.
+                response.result.hits.map { videoItem ->
                     VideoItemCash.create(
                         videoItem,
                         videoSearchRequest
@@ -99,29 +99,25 @@ class PixabayVideosRemoteMediator constructor(
                         videoItemCashList
                     )
                 }
-
             }
 
             MediatorResult.Success(
-                endOfPaginationReached = nextPageNumber(response.hits.size) == null
+                endOfPaginationReached = response.nextPage == null
             )
 
-        } catch (e: IOException) {
+        } catch (e: Exception) {
             MediatorResult.Error(e)
         }
     }
-
-    private fun prevPageNumber() =
-        if (videoSearchRequest.page == 1) null else videoSearchRequest.page - 1
-
-    private fun nextPageNumber(resultsSize: Int) =
-        if (resultsSize < videoSearchRequest.per_page) null else videoSearchRequest.page + 1
 
     override suspend fun initialize(): InitializeAction {
         val cacheTimeout = TimeUnit.DAYS.convert(1, TimeUnit.MILLISECONDS)
         videoCashDao.oldestUpdateByRequest(videoSearchRequest)
             ?: return InitializeAction.LAUNCH_INITIAL_REFRESH
-        return if (System.currentTimeMillis() - videoCashDao.oldestUpdateByRequest(videoSearchRequest)!! >= cacheTimeout) {
+        return if (System.currentTimeMillis() - videoCashDao.oldestUpdateByRequest(
+                videoSearchRequest
+            )!! >= cacheTimeout
+        ) {
             // Cached data is up-to-date, so there is no need to re-fetch
             // from the network.
             InitializeAction.SKIP_INITIAL_REFRESH

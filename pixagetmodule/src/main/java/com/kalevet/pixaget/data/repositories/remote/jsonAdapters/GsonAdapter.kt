@@ -8,7 +8,7 @@ class GsonAdapter: JsonConverter {
 
     val gson: Gson = Gson()
 
-    override fun <T> convert(jsonReader: Reader, classOfT: Class<T>): T? {
+    override fun <T> convert(jsonReader: Reader, classOfT: Class<T>): T {
         return gson.fromJson(jsonReader, classOfT)
     }
 }

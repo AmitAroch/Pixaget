@@ -4,14 +4,12 @@ import android.util.Log
 import com.kalevet.pixaget.data.repositories.remote.JsonConverter
 import com.kalevet.pixaget.data.repositories.remote.requests.PixabaySearchRequest
 import com.kalevet.pixaget.data.repositories.remote.responses.PixabaySearchResult
-import kotlinx.coroutines.Dispatchers.IO
+import com.kalevet.pixaget.exceptions.HttpException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
 import okhttp3.*
 import okhttp3.internal.closeQuietly
-import okio.IOException
-import kotlin.coroutines.resumeWithException
+import java.io.IOException
 
 @ExperimentalCoroutinesApi
 class OkHttpClientAdapter(
@@ -20,14 +18,17 @@ class OkHttpClientAdapter(
     private val debug: Boolean = false,
 ) : PixabayApiService {
 
+    @Throws(IOException::class, HttpException::class)
     override suspend fun sendRequest(request: PixabaySearchRequest<*>): PixabaySearchResult<*>? {
         var result: PixabaySearchResult<*>? = null
-        withContext(IO) {
             val okHttpRequest = Request.Builder()
                 .url(request.buildRequestUrl())
                 .build()
             try {
-                val response = client.newCall(okHttpRequest).await()
+                val response: Response
+                //withContext(IO) {
+                    response = client.newCall(okHttpRequest).await()
+                //}
                 if (response.isSuccessful) {
                     response.body?.charStream()?.let { reader ->
                         result = jsonConverter.convert(reader, request.getResponseClassType())
@@ -35,23 +36,26 @@ class OkHttpClientAdapter(
                     }
                 } else {
                     if (debug) {
-                        Log.e("Pixaget", "Pixaget server failed to response to the request response.code: ${response.code}, response.message: ${response.message}")
+                        Log.e(
+                            "OkHttpClientAdapter",
+                            "Pixabay server failed to response to the request response.code: ${response.code}, response.message: ${response.message}"
+                        )
+                    }
+                    throw (HttpException(response))
+                    /*if (debug) {
+                        Log.e("Pixabay", "Pixabay server failed to response to the request response.code: ${response.code}, response.message: ${response.message}")
                         result = null
                     } else {
                         result = null
-                    }
+                    }*/
                 }
             } catch (e: IOException) {
-                if (debug) {
-                    throw e
-                } else {
-                    // Do nothing
-                    result = null
-                }
+                result = null
             }
-        }
+
         return result
     }
+
 
     /**
      * Suspend extension that allows suspend [Call] inside coroutine.
@@ -64,17 +68,23 @@ class OkHttpClientAdapter(
                 override fun onResponse(call: Call, response: Response) {
                     continuation.resume(response) {
                         try {
-                            cancel()
-                        } catch (ex: Throwable) {
+                            call.cancel()
+                        } catch (e: Throwable) {
                         }
                     }
                 }
 
                 override fun onFailure(call: Call, e: IOException) {
                     if (continuation.isCancelled) return
-                    continuation.resumeWithException(e)
+                    try {
+                        call.cancel()
+                    } catch (e: Throwable) {
+                    }
+                    throw e
+                    //continuation.resumeWithException(e)
                 }
             })
         }
     }
+
 }

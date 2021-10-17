@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.kalevet.pixaget.Pixaget
 import com.kalevet.pixaget.data.repositories.remote.requests.ImageSearchRequest
-import com.kalevet.pixaget.data.repositories.remote.requests.PixabaySearchRequest
 import com.kalevet.pixagetapp.data.models.image.ImageItemCash
 import com.kalevet.pixagetapp.data.repositories.local.room.PixabayCashDatabaseProvider
 import com.kalevet.pixagetapp.data.repositories.paging.PixabayImagesRemoteMediator
@@ -30,14 +29,14 @@ class ImageListViewModel @Inject constructor(
 
     private val database = PixabayCashDatabaseProvider.getPixabayCashDatabase(application)
     private val imageCashDao = database.imageCashDao()
-    private val imageSearchRequest = ImageSearchRequest(query = "girl", image_type = PixabaySearchRequest.ImageTypes.illustration)
+    private val imageSearchRequest = ImageSearchRequest(query = "dog")
 
     private val _imagesFlow =
         MutableStateFlow<PagingData<ImageItemCash>>(PagingData.empty())
     val imagesFlow: Flow<PagingData<ImageItemCash>> = _imagesFlow.asStateFlow()
 
     init {
-        imageSearchRequest.apiKey = "23570191-4b9d123947a3c70a11419dfbe"
+        //imageSearchRequest.apiKey = "23570191-4b9d123947a3c70a11419dfbe"
         initNoQueryImagesFlow(imageSearchRequest)
     }
 
@@ -77,7 +76,7 @@ class ImageListViewModel @Inject constructor(
                 pageSize = 20,
                 enablePlaceholders = false,
                 initialLoadSize = 20,
-                prefetchDistance = 10,
+                prefetchDistance = 1,
             ),
             remoteMediator = remoteMediator
         ) {

@@ -11,27 +11,28 @@ import com.kalevet.pixagetapp.data.models.image.ImageItemCash
 @Dao
 abstract class ImageItemCashDao {
 
+
     @Transaction
     @RawQuery(observedEntities = [ImageItemCash::class])
-    abstract fun pagingSource(query: SupportSQLiteQuery): PagingSource<Int, ImageItemCash>
+    protected abstract fun pagingSource(query: SupportSQLiteQuery): PagingSource<Int, ImageItemCash>
 
     fun pagingSourceByRequest(imageSearchRequest: ImageSearchRequest): PagingSource<Int, ImageItemCash> {
         val query = toRawQuery(
             imageSearchRequest,
-            "SELECT * FROM ImageItemPagerCash WHERE",
-            " ORDER BY primaryKey"//" ORDER BY lastUpdate ASC, image_id"
+            "SELECT * FROM ImageItemCash WHERE",
+            " ORDER BY id"//" ORDER BY lastUpdate ASC, image_id"
         )
         return pagingSource(query)
     }
 
     @Transaction
     @RawQuery
-    abstract suspend fun deleteRequest(query: SupportSQLiteQuery): Int
+    protected abstract suspend fun deleteRequest(query: SupportSQLiteQuery): Int
 
     suspend fun deleteByRequest(imageSearchRequest: ImageSearchRequest): Int{
         val query = toRawQuery(
             imageSearchRequest,
-            "DELETE FROM ImageItemPagerCash WHERE",
+            "DELETE FROM ImageItemCash WHERE",
             "",
         )
         return deleteRequest(query)
@@ -39,12 +40,12 @@ abstract class ImageItemCashDao {
 
     @Transaction
     @RawQuery
-    abstract suspend fun oldestUpdate(query: SupportSQLiteQuery): Long?
+    protected abstract suspend fun oldestUpdate(query: SupportSQLiteQuery): Long?
 
     suspend fun oldestUpdateByRequest(imageSearchRequest: ImageSearchRequest): Long?{
         val query = toRawQuery(
             imageSearchRequest,
-            "SELECT MIN(lastUpdate) FROM ImageItemPagerCash WHERE",
+            "SELECT MIN(lastUpdate) FROM ImageItemCash WHERE",
             ""
         )
         return oldestUpdate(query)

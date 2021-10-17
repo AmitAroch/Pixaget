@@ -14,20 +14,20 @@ abstract class VideoItemCashDao {
 
     @Transaction
     @RawQuery(observedEntities = [VideoItemCash::class])
-    abstract fun pagingSource(query: SupportSQLiteQuery): PagingSource<Int, VideoItemCash>
+    protected abstract fun pagingSource(query: SupportSQLiteQuery): PagingSource<Int, VideoItemCash>
 
     fun pagingSourceByRequest(videoSearchRequest: VideoSearchRequest): PagingSource<Int, VideoItemCash> {
         val query = toRawQuery(
             videoSearchRequest,
             "SELECT * FROM VideoItemCash WHERE",
-            " ORDER BY lastUpdate ASC",
+            " ORDER BY id",
         )
         return pagingSource(query)
     }
 
     @Transaction
     @RawQuery
-    abstract suspend fun deleteRequest(query: SupportSQLiteQuery): Int
+    protected abstract suspend fun deleteRequest(query: SupportSQLiteQuery): Int
 
     suspend fun deleteByRequest(videoSearchRequest: VideoSearchRequest): Int{
         val query = toRawQuery(
@@ -40,7 +40,7 @@ abstract class VideoItemCashDao {
 
     @Transaction
     @RawQuery
-    abstract suspend fun oldestUpdate(query: SupportSQLiteQuery): Long?
+    protected abstract suspend fun oldestUpdate(query: SupportSQLiteQuery): Long?
 
     suspend fun oldestUpdateByRequest(videoSearchRequest: VideoSearchRequest): Long?{
         val query = toRawQuery(
@@ -51,7 +51,6 @@ abstract class VideoItemCashDao {
         return oldestUpdate(query)
     }
 
-    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertAllVideos(videos: List<VideoItemCash>)
 

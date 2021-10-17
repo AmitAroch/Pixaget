@@ -1,9 +1,6 @@
 package com.kalevet.pixagetapp.data.repositories.local.room
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.RawQuery
+import androidx.room.*
 import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.kalevet.pixaget.data.repositories.remote.requests.ImageSearchRequest
@@ -13,13 +10,27 @@ import com.kalevet.pixagetapp.data.repositories.paging.ImageRemoteKey
 @Dao
 abstract class ImagesRemoteKeyDao {
 
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    abstract suspend fun insertOrReplace(remoteKey: ImageRemoteKey)
+    protected abstract suspend fun insertOrReplace(remoteKey: ImageRemoteKey)
 
+    suspend fun insertOrReplaceByRequest(
+        imageSearchRequest: ImageSearchRequest,
+        prevPage: Int?,
+        nextPage: Int?
+    ) {
+        val key = remoteKeyByRequest(imageSearchRequest)?.copy(
+            prevPage = prevPage,
+            nextPage = nextPage
+        ) ?: ImageRemoteKey.fromRequest(imageSearchRequest,prevPage, nextPage)
+        insertOrReplace(key)
+    }
+
+    @Transaction
     @RawQuery
-    abstract suspend fun remoteKeyByQuery(query: SupportSQLiteQuery): ImageRemoteKey
+    protected abstract suspend fun remoteKeyByQuery(query: SupportSQLiteQuery): ImageRemoteKey?
 
-    suspend fun remoteKeyByRequest(imageSearchRequest: ImageSearchRequest): ImageRemoteKey {
+    suspend fun remoteKeyByRequest(imageSearchRequest: ImageSearchRequest): ImageRemoteKey? {
         val query = toRqwQuery(
             imageSearchRequest,
             "SELECT * FROM images_remote_keys WHERE",
@@ -27,8 +38,9 @@ abstract class ImagesRemoteKeyDao {
         return remoteKeyByQuery(query)
     }
 
+    @Transaction
     @RawQuery
-    abstract suspend fun deleteByQuery(query: SupportSQLiteQuery): Int
+    protected abstract suspend fun deleteByQuery(query: SupportSQLiteQuery): Int
 
     suspend fun deleteByRequest(imageSearchRequest: ImageSearchRequest): Int {
         val query = toRqwQuery(
@@ -47,12 +59,12 @@ abstract class ImagesRemoteKeyDao {
         var first = true
         if (isr.query.isNotEmpty()) {
             first = false
-            builder.append(" query='${isr.query}'")
+            builder.append(" `query`='${isr.query}'")
         }
 
         if (isr.image_type != ImageTypes.all) {
             if (first) first = false else builder.append(" AND")
-            builder.append(" type='${isr.image_type.name}'")
+            builder.append(" image_type='${isr.image_type.name}'")
         }
 
         if (isr.orientation != Orientation.all) {
@@ -72,7 +84,7 @@ abstract class ImagesRemoteKeyDao {
 
         if (isr.min_height != 0) {
             if (first) first = false else builder.append(" AND")
-            builder.append(" min_width=${isr.min_height}")
+            builder.append(" min_height=${isr.min_height}")
         }
 
         if (isr.editors_choice) {
@@ -82,12 +94,12 @@ abstract class ImagesRemoteKeyDao {
 
         if (isr.safeSearch) {
             if (first) first = false else builder.append(" AND")
-            builder.append(" safesearch=" + if (isr.safeSearch) 1 else 0)
+            builder.append(" safeSearch=" + if (isr.safeSearch) 1 else 0)
         }
 
         if (isr.order != Order.popular) {
             if (!first) builder.append(" AND")
-            builder.append(" order='${isr.order.name}'")
+            builder.append(" `order`='${isr.order.name}'")
         }
         return SimpleSQLiteQuery(builder.toString())
     }

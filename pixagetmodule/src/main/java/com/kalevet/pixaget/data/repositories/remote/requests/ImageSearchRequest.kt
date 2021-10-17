@@ -69,7 +69,7 @@ data class ImageSearchRequest @JvmOverloads constructor(
     val editors_choice: Boolean = false,
     val safeSearch: Boolean = false,
     val order: Order = Order.popular,
-    var page: Int = 0,
+    var page: Int = 1,
     val per_page: Int = 20,
     val callback: String = String(),
     val pretty: Boolean = false

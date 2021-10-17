@@ -10,6 +10,7 @@ import com.kalevet.pixaget.data.repositories.remote.requests.VideoSearchRequest
 data class VideoItemCash(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val lastUpdate: Long = System.currentTimeMillis(),
     val videoId: Int,
     val type: String?,
     val duration: Int?,
