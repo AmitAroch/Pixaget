@@ -1,6 +1,7 @@
 package com.kalevet.pixagetapp.di
 
 import com.kalevet.pixaget.Pixaget
+import com.kalevet.pixagetapp.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +15,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object PixabayProvider {
 
-    private const val apiKey = "23570191-4b9d123947a3c70a11419dfbe"
+    private const val apiKey = BuildConfig.PIXABAY_API_KEY
 
     /*@Singleton
     @Provides
