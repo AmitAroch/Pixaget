@@ -4,9 +4,6 @@ package com.kalevet.pixaget
 import com.kalevet.pixaget.data.repositories.remote.apiServices.OkHttpClientAdapter
 import com.kalevet.pixaget.data.repositories.remote.apiServices.PixabayApiService
 import com.kalevet.pixaget.data.repositories.remote.apiServices.RetrofitAdapter
-import com.kalevet.pixaget.data.repositories.remote.jsonAdapters.GsonAdapter
-import com.kalevet.pixaget.data.repositories.remote.jsonAdapters.JacksonAdapter
-import com.kalevet.pixaget.data.repositories.remote.jsonAdapters.MoshiAdapter
 import com.kalevet.pixaget.data.repositories.remote.requests.ImageSearchRequest
 import com.kalevet.pixaget.data.repositories.remote.requests.VideoSearchRequest
 import com.kalevet.pixaget.data.repositories.remote.responses.ImageSearchResult
@@ -14,6 +11,9 @@ import com.kalevet.pixaget.data.repositories.remote.responses.VideoSearchResult
 import com.kalevet.pixaget.exceptions.HttpClientIsMissingException
 import com.kalevet.pixaget.exceptions.JsonConverterIsMissingException
 import com.kalevet.pixaget.exceptions.PixabayApiKeyIsMissingException
+import com.kalevet.pixaget.utill.jsonHandlers.GsonAdapter
+import com.kalevet.pixaget.utill.jsonHandlers.JacksonAdapter
+import com.kalevet.pixaget.utill.jsonHandlers.MoshiAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

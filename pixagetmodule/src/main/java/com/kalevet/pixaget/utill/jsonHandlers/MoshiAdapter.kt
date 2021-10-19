@@ -1,6 +1,5 @@
-package com.kalevet.pixaget.data.repositories.remote.jsonAdapters
+package com.kalevet.pixaget.utill.jsonHandlers
 
-import com.kalevet.pixaget.data.repositories.remote.JsonConverter
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi

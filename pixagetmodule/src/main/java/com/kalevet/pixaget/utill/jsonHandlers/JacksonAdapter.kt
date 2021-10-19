@@ -1,9 +1,8 @@
-package com.kalevet.pixaget.data.repositories.remote.jsonAdapters
+package com.kalevet.pixaget.utill.jsonHandlers
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.kalevet.pixaget.data.repositories.remote.JsonConverter
 import java.io.Reader
 
 class JacksonAdapter : JsonConverter {

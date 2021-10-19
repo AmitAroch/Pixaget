@@ -1,4 +1,4 @@
-package com.kalevet.pixaget.data.repositories.remote
+package com.kalevet.pixaget.utill.jsonHandlers
 
 import java.io.Reader
 

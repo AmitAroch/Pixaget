@@ -1,10 +1,10 @@
 package com.kalevet.pixaget.data.repositories.remote.apiServices
 
 import android.util.Log
-import com.kalevet.pixaget.data.repositories.remote.JsonConverter
 import com.kalevet.pixaget.data.repositories.remote.requests.PixabaySearchRequest
 import com.kalevet.pixaget.data.repositories.remote.responses.PixabaySearchResult
 import com.kalevet.pixaget.exceptions.HttpException
+import com.kalevet.pixaget.utill.jsonHandlers.JsonConverter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.*
@@ -25,10 +25,7 @@ class OkHttpClientAdapter(
             .url(request.buildRequestUrl())
             .build()
         try {
-            val response: Response
-            //withContext(IO) {
-            response = client.newCall(okHttpRequest).await()
-            //}
+            val response = client.newCall(okHttpRequest).await()
             if (response.isSuccessful) {
                 response.body?.charStream()?.let { reader ->
                     result = jsonConverter.convert(reader, request.getResponseClassType())
@@ -42,12 +39,6 @@ class OkHttpClientAdapter(
                     )
                 }
                 throw (HttpException(response))
-                /*if (debug) {
-                    Log.e("Pixabay", "Pixabay server failed to response to the request response.code: ${response.code}, response.message: ${response.message}")
-                    result = null
-                } else {
-                    result = null
-                }*/
             }
         } catch (e: IOException) {
             result = null
