@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object PixabayProvider {
 
-    private const val apiKey = BuildConfig.PIXABAY_API_KEY
+    private const val apiKey = ""
 
     /*@Singleton
     @Provides
